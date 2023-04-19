@@ -58,7 +58,7 @@ class HomeState extends State<Home> {
           backgroundColor: Colors.transparent,
           centerTitle: true,
           elevation: 0,
-          title: Text(
+          title: const Text(
             'Captioner',
             style: TextStyle(
                 fontSize: 40, fontWeight: FontWeight.bold, color: Colors.black),
@@ -69,25 +69,25 @@ class HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               IconButton(
-                icon: Icon(Icons.insert_drive_file),
+                icon: const Icon(Icons.insert_drive_file),
                 color: Colors.white,
                 iconSize: 70,
                 onPressed: () {
                   getImage(false);
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 70.0,
               ),
               IconButton(
-                icon: Icon(Icons.camera_alt),
+                icon: const Icon(Icons.camera_alt),
                 color: Colors.white,
                 iconSize: 70,
                 onPressed: () {
                   getImage(true);
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 70.0,
               ),
             ],
@@ -103,12 +103,12 @@ class HomeState extends State<Home> {
                           key: null,
                         )));
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_forward,
             color: Colors.black,
             size: 30,
           ),
-          label: Text(
+          label: const Text(
             "Next",
             style: TextStyle(color: Colors.black, fontSize: 20),
           ),

@@ -91,16 +91,17 @@ class ResultPageState extends State<ResultPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ElevatedButton(
+                    style: const ButtonStyle(alignment: Alignment.center),
+                    // elevation: 5.0,
+                    // color: Colors.white,
+                    // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: () => getCaption(),
                     child: const Text(
                       "Refresh",
                       style: TextStyle(
                         color: Colors.black,
                       ),
                     ),
-                    // elevation: 5.0,
-                    // color: Colors.white,
-                    // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    onPressed: () => getCaption(),
                   ),
                   const SizedBox(
                     width: 25,
@@ -140,7 +141,7 @@ class ResultPageState extends State<ResultPage> {
     data = await getData(url);
 
     setState(() {
-      captions = data['captions'];
+      captions = data.substring(13, data.length - 3);
     });
   }
 

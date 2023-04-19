@@ -25,6 +25,9 @@ def apiHome():
         cap={"captions":captions}
         with open("text/data.json","w") as fjson:
                     json.dump(cap,fjson)
+        with open("text/data.json") as f:
+            data=json.load(f)
+        return data
     else:
         return jsonify({
         "captions":"Refresh again !"
