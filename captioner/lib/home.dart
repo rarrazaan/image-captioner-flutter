@@ -39,16 +39,15 @@ class HomeState extends State<Home> {
   Widget build(BuildContext context) {
     ToastContext().init(context);
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          stops: [0.1, 0.5, 0.7, 0.9],
+          stops: [0.2, 0.6, 0.8],
           colors: [
-            Colors.yellow.shade800,
-            Colors.yellow.shade700,
-            Colors.yellow.shade600,
-            Colors.yellow.shade400,
+            Color.fromRGBO(44, 83, 100, 1),
+            Color.fromRGBO(32, 58, 67, 1),
+            Color.fromRGBO(15, 32, 39, 1),
           ],
         ),
       ),
@@ -61,7 +60,7 @@ class HomeState extends State<Home> {
           title: const Text(
             'Captioner',
             style: TextStyle(
-                fontSize: 40, fontWeight: FontWeight.bold, color: Colors.black),
+                fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
         body: Center(

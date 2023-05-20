@@ -24,16 +24,15 @@ class ResultPageState extends State<ResultPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          stops: const [0.1, 0.5, 0.7, 0.9],
+          stops: [0.2, 0.6, 0.8],
           colors: [
-            Colors.yellow.shade800,
-            Colors.yellow.shade700,
-            Colors.yellow.shade600,
-            Colors.yellow.shade400,
+            Color.fromRGBO(44, 83, 100, 1),
+            Color.fromRGBO(32, 58, 67, 1),
+            Color.fromRGBO(15, 32, 39, 1),
           ],
         ),
       ),
@@ -91,7 +90,9 @@ class ResultPageState extends State<ResultPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ElevatedButton(
-                    style: const ButtonStyle(alignment: Alignment.center),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        alignment: Alignment.center),
                     // elevation: 5.0,
                     // color: Colors.white,
                     // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -107,6 +108,9 @@ class ResultPageState extends State<ResultPage> {
                     width: 25,
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        alignment: Alignment.center),
                     child: const Text(
                       "Audio",
                       style: TextStyle(
