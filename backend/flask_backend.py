@@ -6,7 +6,7 @@ import jsonpickle
 import numpy as np
 import json
 import base64
-import generate_caption as gc
+import generate_caption_transformer as gc
 
 app = Flask(__name__)
 static_dir='images/'

@@ -4,7 +4,6 @@ import argparse
 import os
 from transformers import pipeline
 
-
 def generate_captions(photo_path):
 
     image_to_text = pipeline(

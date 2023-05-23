@@ -44,7 +44,7 @@ def generate_desc(model, tokenizer, photo, max_length):
         if word is None:
             break
         in_text += ' ' + word
-        if word == 'endseq':
+        if word == 'end':
             break
     return in_text
 
