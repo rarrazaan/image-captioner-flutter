@@ -1,3 +1,4 @@
+import 'history_page.dart';
 import 'result_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -87,7 +88,18 @@ class HomeState extends State<Home> {
                 },
               ),
               const SizedBox(
-                height: 70.0,
+                height: 20.0,
+              ),
+              IconButton(
+                icon: const Icon(Icons.history_edu_outlined),
+                color: Colors.white,
+                iconSize: 30,
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HistoryPage()));
+                },
               ),
             ],
           ),

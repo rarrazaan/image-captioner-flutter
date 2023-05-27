@@ -9,7 +9,7 @@ String downloadUrl = "http://10.0.2.2:5000/result";
 Future getData(Uri url) async {
   http.Response response = await http.get(url);
   print(response.body);
-  return json.decode(json.encode(response.body));
+  return json.decode(response.body);
 }
 
 uploadImage(File imageFile, String url) async {

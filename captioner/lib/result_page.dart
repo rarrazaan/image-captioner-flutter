@@ -2,10 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'api.dart';
+import 'database/db_helper.dart';
+import 'model/history.dart';
 
 class ResultPage extends StatefulWidget {
   final File image;
-  const ResultPage({Key? key, required this.image}) : super(key: key);
+  final History? history;
+  const ResultPage({Key? key, required this.image, this.history})
+      : super(key: key);
 
   @override
   // ignore: no_logic_in_create_state
@@ -13,7 +17,9 @@ class ResultPage extends StatefulWidget {
 }
 
 class ResultPageState extends State<ResultPage> {
-  String captions = "Refresh once !";
+  String captions_en = "Refresh once !";
+  String captions_id = "Refresh once !";
+  DbHelper db = DbHelper();
   // ignore: prefer_typing_uninitialized_variables
   var data;
   File? image;
@@ -71,7 +77,7 @@ class ResultPageState extends State<ResultPage> {
                 height: 20,
               ),
               Container(
-                height: 100,
+                height: 50,
                 width: 200,
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
@@ -79,7 +85,23 @@ class ResultPageState extends State<ResultPage> {
                   color: Colors.white,
                 ),
                 child: Text(
-                  captions,
+                  captions_en,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                height: 50,
+                width: 200,
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                child: Text(
+                  captions_id,
                   style: const TextStyle(color: Colors.black),
                 ),
               ),
@@ -112,7 +134,7 @@ class ResultPageState extends State<ResultPage> {
                         backgroundColor: Colors.white,
                         alignment: Alignment.center),
                     child: const Text(
-                      "Audio",
+                      "Save",
                       style: TextStyle(
                         color: Colors.black,
                       ),
@@ -120,7 +142,45 @@ class ResultPageState extends State<ResultPage> {
                     // elevation: 5.0,
                     // color: Colors.white,
                     // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    onPressed: () => speakCaption(),
+                    onPressed: () => upsertHistory(),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        alignment: Alignment.center),
+                    child: const Text(
+                      "Audio-EN",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                    // elevation: 5.0,
+                    // color: Colors.white,
+                    // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: () => speakCaptionEN(),
+                  ),
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        alignment: Alignment.center),
+                    child: const Text(
+                      "Audio-ID",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                    // elevation: 5.0,
+                    // color: Colors.white,
+                    // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: () => speakCaptionID(),
                   ),
                 ],
               )
@@ -145,14 +205,39 @@ class ResultPageState extends State<ResultPage> {
     data = await getData(url);
 
     setState(() {
-      captions = data.substring(13, data.length - 3);
+      captions_en = data['captions_en'];
+      captions_id = data['captions_id'];
     });
   }
 
-  speakCaption() async {
+  speakCaptionEN() async {
     await ftts.setLanguage("en-US");
     await ftts.setPitch(1);
-    await ftts.speak(captions);
+    await ftts.speak(captions_en);
+  }
+
+  speakCaptionID() async {
+    await ftts.setLanguage("id-ID");
+    await ftts.setPitch(1);
+    await ftts.speak(captions_id);
+  }
+
+  Future<void> upsertHistory() async {
+    var bytes = image!.readAsBytesSync();
+    if (await db.getcount(captions_en)) {
+      //update
+      await db.updateHistory(History.fromMap({
+        'id': widget.history!.id,
+        'caption': captions_en,
+        'image': image,
+      }));
+    } else {
+      //insert
+      await db.saveHistory(History(
+        caption: captions_en,
+        image: bytes,
+      ));
+    }
   }
 
   Widget displayImage(File file) {
