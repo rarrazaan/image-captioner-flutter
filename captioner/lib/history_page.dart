@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_function_literals_in_foreach_calls, non_constant_identifier_captions, unused_element, unused_local_variable, sized_box_for_whitespace
 
-import 'dart:io';
-
+import 'package:captioner/history_item.dart';
 import 'package:flutter/material.dart';
 import 'database/db_helper.dart';
 import 'model/history.dart';
@@ -45,29 +44,21 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          // backgroundColor: Color(0x44000000),
+          elevation: 0,
+          centerTitle: true,
+          title: const Text(
+            "History",
+            style: TextStyle(
+                fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(
-                height: 30,
-              ),
-              Container(
-                //color: Colors.white,
-                //margin: EdgeInsets.all(5),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
-                ),
-                child: const Text(
-                  "History",
-                  style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                ),
-              ),
               const SizedBox(
                 height: 30,
               ),
@@ -77,99 +68,77 @@ class _HistoryPageState extends State<HistoryPage> {
                     itemBuilder: (context, index) {
                       History history = listHistory[index];
                       return Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: ListTile(
-                          leading: Image.memory(history.image),
-                          title: Text('${history.caption}'),
-                          tileColor: Colors.white,
-                          subtitle: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            // children: [
-                            //     Padding(
-                            //     padding: const EdgeInsets.only(
-                            //         top: 8,
-                            //     ),
-                            //     child: Text("Email: ${history.email}"),
-                            //     ),
-                            //     Padding(
-                            //     padding: const EdgeInsets.only(
-                            //         top: 8,
-                            //     ),
-                            //     child: Text("Phone: ${history.mobileNo}"),
-                            //     ),
-                            //     Padding(
-                            //     padding: const EdgeInsets.only(
-                            //         top: 8,
-                            //     ),
-                            //     child: Text("Company: ${history.company}"),
-                            //     )
-                            // ],
-                          ),
-                          trailing: FittedBox(
-                            fit: BoxFit.fill,
-                            child: Row(
-                              children: [
-                                // button edit
-                                IconButton(
-                                    onPressed: () {
-                                      captions = '${history.caption}';
-                                      speakCaption();
-                                      // _openFormEdit(history);
-                                    },
-                                    icon: Icon(Icons.audiotrack)),
-                                // button hapus
-                                IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {
-                                    //membuat dialog konfirmasi hapus
-                                    AlertDialog hapus = AlertDialog(
-                                      title: Text("Information"),
-                                      content: Container(
-                                        height: 100,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                                "Yakin ingin Menghapus Data ${history.caption}")
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Container(
+                            height: 100,
+                            child: ListTile(
+                              leading: Image.memory(history.image),
+                              tileColor: Colors.white,
+                              subtitle: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                              ),
+                              visualDensity: VisualDensity(vertical: 4),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HistoryItemPage(
+                                              imageBytes: history.image,
+                                              captions_en: history.caption,
+                                              captions_id: history.keterangan,
+                                              key: null,
+                                            )));
+                              },
+                              trailing: FittedBox(
+                                fit: BoxFit.fill,
+                                child: Row(
+                                  children: [
+                                    // Button delete
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {
+                                        //membuat dialog konfirmasi hapus
+                                        AlertDialog hapus = AlertDialog(
+                                          title: Text("Information"),
+                                          content: Container(
+                                            height: 100,
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                    "Delete '${history.caption}' ?")
+                                              ],
+                                            ),
+                                          ),
+                                          //terdapat 2 button.
+                                          //jika ya maka jalankan _deleteHistory() dan tutup dialog
+                                          //jika tidak maka tutup dialog
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  _deleteHistory(
+                                                      history, index);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("Yes")),
+                                            TextButton(
+                                              child: Text('No'),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
                                           ],
-                                        ),
-                                      ),
-                                      //terdapat 2 button.
-                                      //jika ya maka jalankan _deleteHistory() dan tutup dialog
-                                      //jika tidak maka tutup dialog
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              _deleteHistory(history, index);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text("Ya")),
-                                        TextButton(
-                                          child: Text('Tidak'),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) => hapus);
-                                  },
-                                )
-                              ],
+                                        );
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => hapus);
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      );
+                          ));
                     }),
-                //membuat button mengapung di bagian bawah kanan layar
-                // floatingActionButton: FloatingActionButton(
-                //     child: Icon(Icons.add),
-                //     onPressed: (){
-                //     _openFormCreate();
-                //     },
-                // ),,
               )
             ],
           ),
@@ -202,12 +171,6 @@ class _HistoryPageState extends State<HistoryPage> {
     setState(() {
       listHistory.removeAt(position);
     });
-  }
-
-  speakCaption() async {
-    await ftts.setLanguage("en-US");
-    await ftts.setPitch(1);
-    await ftts.speak(captions);
   }
 
   // // membuka halaman tambah History

@@ -1,35 +1,40 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, no_logic_in_create_state
 
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:toast/toast.dart';
-import 'api.dart';
 import 'database/db_helper.dart';
 import 'model/history.dart';
 
 // ignore: must_be_immutable
-class ResultPage extends StatefulWidget {
-  final File image;
+class HistoryItemPage extends StatefulWidget {
+  final Uint8List imageBytes;
   final History? history;
-  const ResultPage({Key? key, required this.image, this.history})
+  final String? captions_en;
+  final String? captions_id;
+  const HistoryItemPage(
+      {Key? key,
+      required this.imageBytes,
+      this.history,
+      required this.captions_en,
+      required this.captions_id})
       : super(key: key);
 
   @override
-  // ignore: no_logic_in_create_state
-  State<StatefulWidget> createState() => ResultPageState(image);
+  State<StatefulWidget> createState() =>
+      HistoryItemPageState(imageBytes, captions_en!, captions_id!);
 }
 
-class ResultPageState extends State<ResultPage> {
+class HistoryItemPageState extends State<HistoryItemPage> {
   DbHelper db = DbHelper();
   // ignore: prefer_typing_uninitialized_variables
   var data;
-  File? image;
-  String captions_en = "Refresh once !";
-  String captions_id = "Refresh once !";
+  Uint8List imageBytes;
+  String captions_en;
+  String captions_id;
   FlutterTts ftts = FlutterTts();
 
-  ResultPageState(this.image);
+  HistoryItemPageState(this.imageBytes, this.captions_en, this.captions_id);
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +72,7 @@ class ResultPageState extends State<ResultPage> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.white, width: 3),
                 ),
-                child: displayImage(image!),
+                child: displayImage(imageBytes),
               ),
               const SizedBox(
                 height: 20,
@@ -103,48 +108,6 @@ class ResultPageState extends State<ResultPage> {
               ),
               const SizedBox(
                 height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightGreen,
-                        alignment: Alignment.center),
-                    onPressed: () {
-                      getCaption();
-                    },
-                    child: const Text(
-                      "Refresh",
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 25,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlue,
-                        alignment: Alignment.center),
-                    onPressed: () {
-                      upsertHistory();
-                      Toast.show("UPSERT IMAGE !",
-                          duration: Toast.lengthLong,
-                          webTexColor: Colors.white,
-                          backgroundColor: Colors.black54,
-                          backgroundRadius: 15,
-                          gravity: Toast.bottom);
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -191,16 +154,6 @@ class ResultPageState extends State<ResultPage> {
     );
   }
 
-  Future getCaption() async {
-    var url = Uri.parse(uploadUrl);
-    data = await getData(url);
-
-    setState(() {
-      captions_en = data['captions_en'];
-      captions_id = data['captions_id'];
-    });
-  }
-
   speakCaptionEN() async {
     await ftts.setLanguage("en-US");
     await ftts.setPitch(1);
@@ -213,33 +166,12 @@ class ResultPageState extends State<ResultPage> {
     await ftts.speak(captions_id);
   }
 
-  Future<void> upsertHistory() async {
-    await Future.delayed(const Duration(seconds: 1));
-    var bytes = image!.readAsBytesSync();
-    if (await db.getcount(bytes)) {
-      //update
-      await db.updateHistory(History.fromMap({
-        'id': widget.history!.id,
-        'caption': captions_en,
-        'keterangan': captions_id,
-        'image': image,
-      }));
-    } else {
-      //insert
-      await db.saveHistory(History(
-        caption: captions_en,
-        keterangan: captions_id,
-        image: bytes,
-      ));
-    }
-  }
-
-  Widget displayImage(File file) {
+  Widget displayImage(Uint8List imageBytes) {
     return SizedBox(
       height: 250.0,
       width: 200.0,
       // ignore: unnecessary_null_comparison
-      child: file == null ? Container() : Image.file(file),
+      child: imageBytes == null ? Container() : Image.memory(imageBytes),
     );
   }
 }

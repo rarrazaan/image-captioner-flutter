@@ -1,3 +1,5 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'history_page.dart';
 import 'result_page.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,8 @@ import 'api.dart';
 import 'package:toast/toast.dart';
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   State<StatefulWidget> createState() => HomeState();
 }
@@ -26,8 +30,8 @@ class HomeState extends State<Home> {
     uploadImage(img, uploadUrl);
     Toast.show("IMAGE UPLOADED !",
         duration: Toast.lengthLong,
-        webTexColor: Colors.black,
-        backgroundColor: Colors.white12,
+        webTexColor: Colors.white,
+        backgroundColor: Colors.black54,
         backgroundRadius: 15,
         gravity: Toast.bottom);
 
@@ -88,12 +92,12 @@ class HomeState extends State<Home> {
                 },
               ),
               const SizedBox(
-                height: 20.0,
+                height: 45.0,
               ),
               IconButton(
                 icon: const Icon(Icons.history_edu_outlined),
                 color: Colors.white,
-                iconSize: 30,
+                iconSize: 45,
                 onPressed: () {
                   Navigator.push(
                       context,
@@ -106,13 +110,15 @@ class HomeState extends State<Home> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ResultPage(
-                          image: _image,
-                          key: null,
-                        )));
+            if (_image != Null) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ResultPage(
+                            image: _image,
+                            key: null,
+                          )));
+            }
           },
           icon: const Icon(
             Icons.arrow_forward,

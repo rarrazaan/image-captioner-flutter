@@ -1,11 +1,10 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, depend_on_referenced_packages
 
 //dbhelper ini dibuat untuk
 //membuat database, membuat tabel, proses insert, read, update dan delete
 
 import 'package:captioner/model/history.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
 
 class DbHelper {
@@ -16,6 +15,7 @@ class DbHelper {
   final String tableCaption = 'tableHistory';
   final String columnId = 'id';
   final String columnCaption = 'caption';
+  final String columnKeterangan = 'keterangan';
   final String columnImage = 'image';
 
   DbHelper._internal();
@@ -41,6 +41,7 @@ class DbHelper {
   Future<void> _onCreate(Database db, int version) async {
     var sql = "CREATE TABLE $tableCaption($columnId INTEGER PRIMARY KEY, "
         "$columnCaption TEXT,"
+        "$columnKeterangan TEXT,"
         "$columnImage BLOB)";
     await db.execute(sql);
   }
@@ -57,6 +58,7 @@ class DbHelper {
     var result = await dbClient!.query(tableCaption, columns: [
       columnId,
       columnCaption,
+      columnKeterangan,
       columnImage,
     ]);
 
@@ -83,9 +85,10 @@ class DbHelper {
         columns: [
           columnId,
           columnCaption,
+          columnKeterangan,
           columnImage,
         ],
-        where: '$columnCaption = ?',
+        where: '$columnImage = ?',
         whereArgs: [key]);
 
     return maps.isNotEmpty;
